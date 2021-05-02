@@ -31,8 +31,6 @@ let fStatement = function statement(invoice){
     const format = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format;
 
     for(let perf of invoice.performances) {
-        let thisAmount = amountFor(perf);
-
         //soma créditos por volume
         volumeCredits += Math.max(perf.audience - 30, 0);
 
@@ -40,8 +38,8 @@ let fStatement = function statement(invoice){
         if ("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
 
         //Exibe a linha para esta requisição
-        result += ` ${playFor(perf).name}: ${format(thisAmount/100)} (${perf.audience} seats) \n `
-        totalAmount+= thisAmount;
+        result += ` ${playFor(perf).name}: ${format(amountFor(perf)/100)} (${perf.audience} seats) \n `
+        totalAmount+= amountFor(perf);
     }
 
     result += `Amount owned is ${format(totalAmount/100)} \n `;
