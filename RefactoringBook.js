@@ -31,13 +31,12 @@ let fStatement = function statement(invoice){
         //Exibe a linha para esta requisição
         result += ` ${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats) \n `
     }
-    let totalAmount = appleSauce();
-    result += `Amount owned is ${usd(totalAmount)} \n `;
+    result += `Amount owned is ${usd(totalAmount())} \n `;
     result += `You earned ${totalVolumeCredits()} credits \n `;
 
     return result;
 
-    function appleSauce() {
+    function totalAmount() {
         let totalAmount = 0;
         for(let perf of invoice.performances) {
             totalAmount+= amountFor(perf);
