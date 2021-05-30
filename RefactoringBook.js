@@ -37,19 +37,19 @@ let fStatement = function statement(invoice){
     return result;
 
     function totalAmount() {
-        let totalAmount = 0;
+        let resultTotalAmount = 0;
         for(let perf of invoice.performances) {
-            totalAmount+= amountFor(perf);
+            resultTotalAmount+= amountFor(perf);
         }
-        return totalAmount;
+        return resultTotalAmount;
     }
 
     function totalVolumeCredits() {
-        let volumeCredits = 0;
+        let resultTotalVolumeCredits = 0;
         for(let perf of invoice.performances) {
-            volumeCredits += volumeCreditsFor(perf);
+            resultTotalVolumeCredits += volumeCreditsFor(perf);
         }
-        return volumeCredits;
+        return resultTotalVolumeCredits;
     }
 }
 
