@@ -28,7 +28,25 @@ let fStatement = function statement(invoice, plays){
     const statementData = {};
     statementData.customer = invoice.customer;
     statementData.performances = invoice.performances.map(enrichPerformance);
+    statementData.totalAmount = totalAmount(statementData);
+    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
     return renderPlainText(statementData, plays);
+
+    function totalAmount(data) {
+        let resultTotalAmount = 0;
+        for(let perf of data.performances) {
+            resultTotalAmount+= perf.amount;
+        }
+        return resultTotalAmount;
+    }
+
+    function totalVolumeCredits(data) {
+        let resultTotalVolumeCredits = 0;
+        for(let perf of data.performances) {
+            resultTotalVolumeCredits += perf.volumeCredits;
+        }
+        return resultTotalVolumeCredits;
+    }
 
     function enrichPerformance(aPerformance) {
         const result = Object.assign({}, aPerformance);
@@ -81,26 +99,10 @@ function renderPlainText(data, plays) {
         //Exibe a linha para esta requisição
         result += ` ${perf.play.name}: ${usd(perf.amount)} (${perf.audience} seats) \n `
     }
-    result += `Amount owned is ${usd(totalAmount())} \n `;
-    result += `You earned ${totalVolumeCredits()} credits \n `;
+    result += `Amount owned is ${usd(data.totalAmount)} \n `;
+    result += `You earned ${data.totalVolumeCredits} credits \n `;
 
     return result;
-
-    function totalAmount() {
-        let resultTotalAmount = 0;
-        for(let perf of data.performances) {
-            resultTotalAmount+= perf.amount;
-        }
-        return resultTotalAmount;
-    }
-
-    function totalVolumeCredits() {
-        let resultTotalVolumeCredits = 0;
-        for(let perf of data.performances) {
-            resultTotalVolumeCredits += perf.volumeCredits;
-        }
-        return resultTotalVolumeCredits;
-    }
     
     function usd(aNumber) {
         return new Intl.NumberFormat("en-US",
