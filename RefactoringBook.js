@@ -33,11 +33,8 @@ let fStatement = function statement(invoice, plays){
     return renderPlainText(statementData, plays);
 
     function totalAmount(data) {
-        let resultTotalAmount = 0;
-        for(let perf of data.performances) {
-            resultTotalAmount+= perf.amount;
-        }
-        return resultTotalAmount;
+        return data.performances
+            .reduce((total, p) => total + p.amount,0);
     }
 
     function totalVolumeCredits(data) {
