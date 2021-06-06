@@ -33,11 +33,36 @@ let fStatement = function statement(invoice, plays){
     function enrichPerformance(aPerformance) {
         const result = Object.assign({}, aPerformance);
         result.play = playFor(result);
+        result.amount = amountFor(result);
         return result;
     }
 
     function playFor(aPerformance) {
         return plays[aPerformance.playID];
+    }
+
+    function amountFor(aPerformance) {
+        let resultAmountFor = 0;
+    
+        switch(aPerformance.play.type) {
+            case "tragedy":
+                resultAmountFor = 40000;
+                if(aPerformance.audience > 30) {
+                    resultAmountFor += 1000 * (aPerformance.audience -30);
+                }
+                break;
+            case "comedy":
+                resultAmountFor = 30000;
+                if(aPerformance.audience > 20) {
+                    resultAmountFor += 10000 + 500 * (aPerformance.audience - 20);
+                }
+                resultAmountFor += 300 * aPerformance.audience;
+                break;
+            default:
+                throw new Error(`unknown type: ${playFor(aPerformance).type}`);
+        }
+    
+        return resultAmountFor;
     }
 }
 
@@ -45,7 +70,7 @@ function renderPlainText(data, plays) {
     let result = `Statement for ${data.customer} \n `;
     for(let perf of data.performances) {
         //Exibe a linha para esta requisição
-        result += ` ${perf.play.name}: ${usd(amountFor(perf))} (${perf.audience} seats) \n `
+        result += ` ${perf.play.name}: ${usd(perf.amount)} (${perf.audience} seats) \n `
     }
     result += `Amount owned is ${usd(totalAmount())} \n `;
     result += `You earned ${totalVolumeCredits()} credits \n `;
@@ -55,7 +80,7 @@ function renderPlainText(data, plays) {
     function totalAmount() {
         let resultTotalAmount = 0;
         for(let perf of data.performances) {
-            resultTotalAmount+= amountFor(perf);
+            resultTotalAmount+= perf.amount;
         }
         return resultTotalAmount;
     }
@@ -80,29 +105,5 @@ function renderPlainText(data, plays) {
         return new Intl.NumberFormat("en-US",
             { style: "currency", currency: "USD", 
                 minimumFractionDigits: 2 }).format(aNumber/100);
-    }
-    
-    function amountFor(aPerformance) {
-        let resultAmountFor = 0;
-    
-        switch(aPerformance.play.type) {
-            case "tragedy":
-                resultAmountFor = 40000;
-                if(aPerformance.audience > 30) {
-                    resultAmountFor += 1000 * (aPerformance.audience -30);
-                }
-                break;
-            case "comedy":
-                resultAmountFor = 30000;
-                if(aPerformance.audience > 20) {
-                    resultAmountFor += 10000 + 500 * (aPerformance.audience - 20);
-                }
-                resultAmountFor += 300 * aPerformance.audience;
-                break;
-            default:
-                throw new Error(`unknown type: ${playFor(aPerformance).type}`);
-        }
-    
-        return resultAmountFor;
     }
 }
