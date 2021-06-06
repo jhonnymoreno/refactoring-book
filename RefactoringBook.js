@@ -34,6 +34,7 @@ let fStatement = function statement(invoice, plays){
         const result = Object.assign({}, aPerformance);
         result.play = playFor(result);
         result.amount = amountFor(result);
+        result.volumeCredits = volumeCreditsFor(result);
         return result;
     }
 
@@ -64,6 +65,14 @@ let fStatement = function statement(invoice, plays){
     
         return resultAmountFor;
     }
+
+    function volumeCreditsFor(perf) {
+        let resultVolumeCreditsFor = 0;
+        resultVolumeCreditsFor += Math.max(perf.audience - 30, 0);
+        if ("comedy" === perf.play.type) resultVolumeCreditsFor += 
+            Math.floor(perf.audience / 5);
+        return resultVolumeCreditsFor;
+    }
 }
 
 function renderPlainText(data, plays) {
@@ -88,17 +97,9 @@ function renderPlainText(data, plays) {
     function totalVolumeCredits() {
         let resultTotalVolumeCredits = 0;
         for(let perf of data.performances) {
-            resultTotalVolumeCredits += volumeCreditsFor(perf);
+            resultTotalVolumeCredits += perf.volumeCredits;
         }
         return resultTotalVolumeCredits;
-    }
-
-    function volumeCreditsFor(perf) {
-        let resultVolumeCreditsFor = 0;
-        resultVolumeCreditsFor += Math.max(perf.audience - 30, 0);
-        if ("comedy" === perf.play.type) resultVolumeCreditsFor += 
-            Math.floor(perf.audience / 5);
-        return resultVolumeCreditsFor;
     }
     
     function usd(aNumber) {
