@@ -1,41 +1,10 @@
-//play.json
-let plays = {
-    "hamlet" : {"name": "Hamlet", "type": "tragedy" },
-    "as-like" : {"name": "As You Like It", "type": "comedy" },
-    "othello" : {"name": "Othello", "type": "tragedy"}
-}
-
-//invoices.json
-let invoice = {
-    "customer": "BigCo",
-    "performances": [
-        {
-            "playID": "hamlet",
-            "audience": 55
-        },
-        {
-            "playID": "as-like",
-            "audience": 35
-        },
-        {
-            "playID": "othello",
-            "audience": 40
-        }
-    ]
-}
-
-let fStatement = function statement(invoice, plays){
-    return renderPlainText(createStatementData(invoice, plays));
-}
-
-function createStatementData(invoice, plays) {
-    const statementData = {};
-    statementData.customer = invoice.customer;
-    statementData.performances = invoice.performances.map(enrichPerformance);
-    statementData.totalAmount = totalAmount(statementData);
-    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
-    return statementData;
-    
+export default function createStatementData(invoice, plays) {
+    const resultStatementData = {};
+    resultStatementData.customer = invoice.customer;
+    resultStatementData.performances = invoice.performances.map(enrichPerformance);
+    resultStatementData.totalAmount = totalAmount(resultStatementData);
+    resultStatementData.totalVolumeCredits = totalVolumeCredits(resultStatementData);
+    return resultStatementData; 
 
     function totalAmount(data) {
         return data.performances
@@ -92,23 +61,5 @@ function createStatementData(invoice, plays) {
         if ("comedy" === perf.play.type) resultVolumeCreditsFor += 
             Math.floor(perf.audience / 5);
         return resultVolumeCreditsFor;
-    }
-}
-
-function renderPlainText(data) {
-    let result = `Statement for ${data.customer} \n `;
-    for(let perf of data.performances) {
-        //Exibe a linha para esta requisição
-        result += ` ${perf.play.name}: ${usd(perf.amount)} (${perf.audience} seats) \n `
-    }
-    result += `Amount owned is ${usd(data.totalAmount)} \n `;
-    result += `You earned ${data.totalVolumeCredits} credits \n `;
-
-    return result;
-    
-    function usd(aNumber) {
-        return new Intl.NumberFormat("en-US",
-            { style: "currency", currency: "USD", 
-                minimumFractionDigits: 2 }).format(aNumber/100);
     }
 }
